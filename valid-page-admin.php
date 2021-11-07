@@ -1,0 +1,19 @@
+<?php
+ob_start();
+if(!isset($_SESSION)){
+	session_start();
+}
+if(!isset($_SESSION['user'])){
+	header("location:resitrict-acc-member.php");
+	exit();
+}else{
+	$level=$_SESSION['level'];
+	if(!($level=="admin")){
+		header("location:resitrict-acc-member.php");
+		exit();
+	}
+}
+?>
+<?php
+ob_flush();
+?>

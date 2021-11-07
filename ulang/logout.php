@@ -1,0 +1,20 @@
+<?php
+ob_start();
+if(!isset($_SESSION['user'])){
+	session_start();
+}
+$level=$_SESSION['level'];
+unset($_SESSION['nama']);
+unset($_SESSION['user']);
+unset($_SESSION['pass']);
+unset($_SESSION['level']);
+unset($_SESSION['foto']);
+unset($_SESSION['email']);
+session_destroy();
+if($level=="admin" or $level=="user"){
+	header("location:./admin/index.php");
+}else{
+	header("location:index.php");
+}
+ob_flush();
+?>

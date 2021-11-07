@@ -1,0 +1,164 @@
+<?php
+include("koneksi.php");
+if(isset($_POST['nama'])){
+	$nama		= strip_tags(trim($_POST['nama']));
+	$user		= strip_tags(trim($_POST['m_username']));
+	$pass		= sha1(strip_tags(trim($_POST['m_password'])));
+	$email		= strip_tags(trim($_POST['email']));
+	$level		= strip_tags(trim($_POST['level']));
+	$photo		= $_FILES['photo']['name']?$_FILES['photo']['name']:"Default.jpg";
+	$sizephoto	= $_FILES['photo']['size'];
+	$cekdata	= mysql_query("SELECT * FROM USER WHERE username='$user'",$koneksi);
+	$jlh_data	= mysql_num_rows($cekdata);
+	if($jlh_data>0){
+		?>
+        <script>
+		alert('Data dengan Username : <?php echo $user;?> sudah pernah Ada!');
+        history.back();
+        </script>
+        <?php	
+	}else{
+		$simpandata = mysql_query("INSERT INTO USER(nama, username, password, email, level, photo) VALUES('$nama', '$user', '$pass', '$email', '$level', '$photo')");
+		if($simpandata && isset($_FILES['photo']['name'])){
+				move_uploaded_file($_FILES['photo']['tmp_name'],'Photouser/'.$photo);
+		}
+		header('location:tampiluser.php');
+	}
+}
+mysql_close($koneksi);
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+*{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+input[type=text],input[type=password],input[type=email],input[type=file]{
+	width:200px;
+	height:25px;
+	padding-left:10px;
+	border-radius:3px;
+	border:2px solid #CCC;
+	margin-bottom:10px;
+}
+select{
+	width:215px;
+	height:30px;
+	padding-left:10px;
+	border-radius:3px;
+	border:2px solid #CCC;
+	margin-bottom:10px;
+}
+.tombolmerah{
+	height:35px;
+	background-image:linear-gradient(#F36,#F00);
+	cursor:pointer;
+	border-radius:5px;
+	border:0px;
+	box-shadow:2px 2px 3px #333;
+	color:#FFF;
+	font-weight:bold;
+}
+.tombolmerah:active{
+	background-image:linear-gradient(#F00,#F36);
+	box-shadow:0px 0px 0px;
+}
+
+.tombolhijau{
+	height:35px;
+	background-image:linear-gradient(#0F0,#0C0);
+	cursor:pointer;
+	border-radius:5px;
+	border:0px;
+	box-shadow:2px 2px 3px #333;
+	color:#FFF;
+	font-weight:bold;
+}
+.tombolhijau:active{
+	background-image:linear-gradient(#0C0,#0F0);
+	box-shadow:0px 0px 0px;
+}
+input[type=submit],input[type=reset]{
+	width:100px;
+	margin-right:10px;
+}
+</style>
+<script>
+function cekpassword(){
+	var pass = document.getElementById("m_password").value;
+	var pass1 = document.getElementById("m_password").value;
+	var pass2 = document.getElementById("confirm_pass").value;
+	if (pass.length < 8 && pass1 != pass2){
+		document.getElementById("msg_confirm").style="color:#ff0000";
+		document.getElementById("msg_confirm").innerHTML="Password Length must 8 character or more.";
+		document.getElementById("m_password").focus();
+		return false;
+	}else if (pass.length >= 8 && pass2.length <= 0){
+		document.getElementById("msg_confirm").style="color:#00ff00";
+		document.getElementById("msg_confirm").innerHTML="Password Length is Good!";
+	}else if (pass.length >= 8 && pass1 != pass2) {
+		document.getElementById("msg_confirm").style="color:#ff0000";
+		document.getElementById("msg_confirm").innerHTML="Confirm Password and Password not same!, Please try again";
+		document.getElementById("confirm_pass").focus();
+		return false;
+	}else if (pass.length >= 8 && pass1 == pass2){
+		document.getElementById("msg_confirm").style="color:#0000ff";
+		document.getElementById("msg_confirm").innerHTML="Password Match";	
+	}
+	return true;
+}
+
+function cekfile(){
+	var filein = document.getElementById("photo");
+	var info = filein.files[0];
+	var sizefile = info.size;
+	if(sizefile > 2097152){ //Jika file berukuran lebih dari 2MB
+		document.getElementById("msg_file").style="color:#ff0000;";
+		document.getElementById("msg_file").innerHTML="Maximum File size : 2MB. Size File: " + (sizefile/1048576) + " MB.";
+		document.getElementById("msg_file").focus();
+		return false;	
+	}else{
+		document.getElementById("msg_file").style="color:#00ff00;";
+		document.getElementById("msg_file").innerHTML="File size Accept: " + (sizefile/1024) + "KB.";	
+	}
+	return true;
+}
+</script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>.::INPUT USER::.</title>
+</head>
+
+<body>
+
+<form id="forminputuser" name="forminputuser" action="#" method="post" target="_self" enctype="multipart/form-data">
+<b>FORM INPUT USER</b>
+<hr align="left" width="215px"/><br>
+<label for="nama">Full Name :</label><br />
+<input type="text" id="nama" name='nama' placeholder="You Full-name" required /><br />
+<label for="username">You Username :</label><br />
+<input type="text" id="m_username" name='m_username' placeholder="You Username" required /><br />
+<label for="password">You Password Access:</label><br />
+<input type="password" id="m_password" name="m_password" required onBlur="cekpassword();"/><br />
+<label for="confirm_pass">Confirm Password :</label><br />
+<input type="password" id="confirm_pass" name="confirm_pass" required onBlur="cekpassword();"  onFocus="cekpassword();"/><br />
+<div id="msg_confirm"></div><br />
+<label for="email">You Email :</label><br />
+<input type="email" id="email" name="email" placeholder="You Email Address" required onFocus="cekpassword();"/><br />
+<label for="level">Level Access Web :</label><br />
+<select id="level" name="level">
+	<option disabled>-Pilih Salah Satu Level-</option>
+	<option value="admin">Admin</option>
+    <option value="user">User</option>
+    <option value="member">Member</option>
+</select><br>
+<label for="photo">Select You Photo Profile :</label><br>
+<input type="file" id="photo" name="photo" onBlur="cekfile();" onChange="cekfile();"><br>
+<div id="msg_file"></div><br>
+<input type="submit" id="submit" name="submit" value="Simpan Data" class="tombolhijau">
+<input type="reset" id="reset" name="reset" value="Batalkan" onClick="history.back();"  class="tombolmerah">
+</form>
+</body>
+</html> 

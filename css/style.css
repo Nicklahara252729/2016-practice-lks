@@ -1,0 +1,60 @@
+@charset "utf-8";
+/* CSS Document */
+main{
+	width:300px;
+	height:auto;
+	border:solid 1px lightgray;
+	border-radius:3px;
+	margin:0 auto;
+	font-family:"calibri";
+	font-size:15px;
+}
+input[type="text"],
+input[type="number"],
+input[type="file"],
+input[type="email"],
+input[type="url"]{
+	width:90%;
+	height:35px;
+	border:solid 1px lightgray;
+	border-radius:3px;
+	padding-left:10px;
+}
+textarea{
+	width:90%;
+	height:60px;
+	border:solid 1px lightgray;
+	border-radius:3px;
+	font-family:"calibri";
+	font-size:15px;
+	padding-left:10px;
+}
+select{
+	width:85%;
+	height:35px;
+	border:solid 1px lightgray;
+	border-radius:3px;
+}
+main form{
+	margin-top:10px;
+	margin-left:20px;	
+}
+main button{
+	margin-top:10px;
+	border:0;
+	border-radius:3px;
+	color:white;
+	height:30px;
+	width:46%;
+	margin-bottom:10px;
+}
+main button[type="submit"]{
+	background:blue;
+}
+main button[type="reset"]{
+	background:green;
+}
+main button[type="button"]{
+	width:20px;
+	color:black;
+}
